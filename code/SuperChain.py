@@ -184,7 +184,7 @@ def stitch_chains(primary_chains: List[List[str]],
 SEC_PAT   = re.compile(NAME_PAT)  
 SCORE_PAT = re.compile(r'\bscore\s*:\s*([0-9.]+)', re.I)
 
-# === 解析工具：parse_primary / parse_secondary 用统一的 SEC_PAT ===
+# === parsing tools: parse_primary / parse_secondary use the same SEC_PAT ===    
 def parse_primary(raw: str):
     chains = []
     for line in raw.strip().splitlines():
@@ -232,9 +232,9 @@ def best_link_for_two(chainA: List[str],
                       fallback_depth: int = 1
                       ) -> Optional[Tuple[float, str, str, str, str]]:
     """
-    考察 4×4 (=16) 端点组合：
+    consider 4×4 (=16) endpoint combinations:
         A:{head0, head1, tail0, tail1} × B:{head0, head1, tail0, tail1}
-    返回 (score, nodeA, posA, nodeB, posB) —— 其中 pos∈{'head','tail'}
+    return (score, nodeA, posA, nodeB, posB) —— where pos∈{'head','tail'}
     """
 
     def endpoint_nodes(chain):
@@ -243,7 +243,7 @@ def best_link_for_two(chainA: List[str],
         if fallback_depth > 0 and len(chain) > fallback_depth:
             nodes.append((chain[fallback_depth], 'head'))
             nodes.append((chain[-1 - fallback_depth], 'tail'))
-        # 去重，保持顺序
+        # deduplicate, keep order
         seen, uniq = set(), []
         for n, p in nodes:
             if n not in seen:
@@ -269,7 +269,7 @@ def best_link_for_two(chainA: List[str],
         return None
 
     sc, _, posA, _, posB = best
-    # 把 pos 映射回真正链端（head→chain[0]，tail→chain[-1]）
+    # map pos back to actual chain ends (head→chain[0], tail→chain[-1])
     nodeA_end = chainA[0] if posA == 'head' else chainA[-1]
     nodeB_end = chainB[0] if posB == 'head' else chainB[-1]
     return sc, nodeA_end, posA, nodeB_end, posB
