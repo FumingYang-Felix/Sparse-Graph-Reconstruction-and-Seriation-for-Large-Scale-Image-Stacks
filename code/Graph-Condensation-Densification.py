@@ -240,7 +240,7 @@ def auto_tune_threshold(images, all_sections, data_manager, cache_sift=False, fa
     if inlier_threshold is None:
         inlier_threshold = DEFAULT_INLIER_THRESHOLD
     if verbose:
-        print(f"\n🎯 AUTO-TUNING SSIM THRESHOLD")
+        print(f"\n AUTO-TUNING SSIM THRESHOLD")
         print(f"   Target degree: {target_degree} connections per node")
         print(f"   Sample nodes: {sample_nodes}")
     
@@ -342,7 +342,7 @@ def auto_tune_threshold(images, all_sections, data_manager, cache_sift=False, fa
     best_threshold = min(threshold_degrees, key=lambda x: abs(x[1] - target_degree))[0]
     
     if verbose:
-        print(f"   ✅ Auto-tuned threshold: {best_threshold:.2f}")
+        print(f"   Auto-tuned threshold: {best_threshold:.2f}")
     
     return best_threshold
 
@@ -569,17 +569,17 @@ def randomized_boruvka_sublinear(all_sections, edge_oracle, verbose=False):
     
     if verbose:
         print("\n" + "="*60)
-        print("🎯 SUBLINEAR APPROACH: Randomized Borůvka Algorithm")
+        print(" SUBLINEAR APPROACH: Randomized Borůvka Algorithm")
         print("="*60)
-        print("⚠️  WARNING: This feature is UNDER CONSTRUCTION")
-        print("   The sublinear approach is experimental and may not be fully optimized.")
+        print("⚠  WARNING: This feature is UNDER CONSTRUCTION")
+        print("  The sublinear approach is experimental and may not be fully optimized.")
         print("   Please use --verbose for detailed algorithmic walkthrough.\n")
         
-        print("📚 ALGORITHMIC OVERVIEW:")
+        print(" ALGORITHMIC OVERVIEW:")
         print("   Using Randomized Borůvka (\"random-hook\") algorithm")
         print("   Works with nothing more than an EdgeExists(u,v) oracle and Union-Find structure.\n")
         
-        print("🔬 DETAILED APPROACH:")
+        print(" DETAILED APPROACH:")
         print("   1. Forest view: Treat every vertex as one-node \"component\"")
         print("   2. Hooking phase: Each component tries to attach to different component")
         print("      by probing just a few random edges instead of scanning all pairs")
@@ -600,13 +600,13 @@ def randomized_boruvka_sublinear(all_sections, edge_oracle, verbose=False):
     max_rounds = math.ceil(math.log2(N))     # maximum number of rounds
     
     if verbose:
-        print(f"📊 PARAMETERS:")
+        print(f" PARAMETERS:")
         print(f"   N (vertices): {N}")
         print(f"   k (samples per vertex per phase): {k}")
         print(f"   max_rounds (maximum phases): {max_rounds}")
         print(f"   Theoretical edge tests: N × k × log₂(N) = {N} × {k} × {max_rounds} ≈ {N * k * max_rounds:,}")
         print(f"   vs. Complete pairwise: N(N-1)/2 = {N*(N-1)//2:,}")
-        print(f"   🚀 Reduction factor: {(N*(N-1)//2) / (N * k * max_rounds):.1f}x fewer edge tests\n")
+        print(f"   Reduction factor: {(N*(N-1)//2) / (N * k * max_rounds):.1f}x fewer edge tests\n")
     
     # Initialize Union-Find
     uf = UnionFind(N)
@@ -683,7 +683,7 @@ def randomized_boruvka_sublinear(all_sections, edge_oracle, verbose=False):
     }
     
     if verbose:
-        print(f"🏁 FINAL STATISTICS:")
+        print(f" FINAL STATISTICS:")
         print(f"   Total phases completed: {phase}")
         print(f"   Total edge tests: {total_edge_tests:,}")
         print(f"   Total successful hooks: {total_successful_hooks}")
@@ -695,7 +695,7 @@ def randomized_boruvka_sublinear(all_sections, edge_oracle, verbose=False):
         if uf.num_components == 1:
             print(f"   ✅ SUCCESS: Connected spanning tree achieved!")
         else:
-            print(f"   ⚠️  WARNING: {uf.num_components} disconnected components remain")
+            print(f"   ⚠  WARNING: {uf.num_components} disconnected components remain")
             print(f"   This may indicate sparse connectivity in the underlying graph")
     
     return spanning_tree, stats
@@ -776,7 +776,7 @@ def final_k_densification_verification(all_sections, final_order, edge_oracle, g
     if verbose:
         if connections_found > 10:
             print(f"      ... and {connections_found - 10} more connections")
-        print(f"   📊 Phase F Stats: {total_tests:,} tests, {connections_found:,} connections")
+        print(f"      Phase F Stats: {total_tests:,} tests, {connections_found:,} connections")
         print(f"      NEW tests: {newly_computed_tests:,}, NEW connections: {newly_computed_connections:,}")
         print(f"      Overall success rate: {success_rate:.1%}")
         print(f"      NEW computations success rate: {newly_computed_success_rate:.1%}")
@@ -784,7 +784,7 @@ def final_k_densification_verification(all_sections, final_order, edge_oracle, g
         if newly_computed_connections == 0:
             print(f"      ✅ Perfect K-densification: No new local connections discovered!")
         else:
-            print(f"      💡 Found {newly_computed_connections} NEW additional local connections")
+            print(f"      Found {newly_computed_connections} NEW additional local connections")
             print(f"      This suggests the ordering could be further improved")
     
     return {
@@ -827,9 +827,9 @@ def build_and_order_sublinear(all_sections, edge_oracle, get_edge_data, verbose=
     
     if verbose:
         print("\n" + "="*70)
-        print("🎯 BUILD-AND-ORDER: Sub-quadratic 1-D Ordering")
+        print("   BUILD-AND-ORDER: Sub-quadratic 1-D Ordering")
         print("="*70)
-        print("📚 BINARY GRAPH ALGORITHM FOR BIOLOGICAL SECTION ALIGNMENT:")
+        print("   BINARY GRAPH ALGORITHM FOR BIOLOGICAL SECTION ALIGNMENT:")
         print("   Using binary oracle (strong connections only)")
         print("   Phase A: Short-edge Borůvka tree")
         print("   Phase B: Farthest-point condensation (3 rounds)")
@@ -860,7 +860,7 @@ def build_and_order_sublinear(all_sections, edge_oracle, get_edge_data, verbose=
         t = 3   # Fixed condensation rounds
     
     if verbose:
-        print(f"📊 ALGORITHM PARAMETERS:")
+        print(f"   ALGORITHM PARAMETERS:")
         print(f"   Algorithm: Binary Graph BUILD-AND-ORDER")
         print(f"   K (window half-width): {K}")
         print(f"   s (samples per phase): {s}")
@@ -870,7 +870,7 @@ def build_and_order_sublinear(all_sections, edge_oracle, get_edge_data, verbose=
     
     # Phase A: Short-edge Borůvka tree
     if verbose:
-        print("🔄 PHASE A: Short-edge Borůvka Tree")
+        print(" PHASE A: Short-edge Borůvka Tree")
         if two_phase:
             print("   Using two-phase weak→strong approach")
     
@@ -882,33 +882,33 @@ def build_and_order_sublinear(all_sections, edge_oracle, get_edge_data, verbose=
     if verbose:
         comps = N - len(tree_edges)
         print(f"   ✅ Found {len(tree_edges)} tree edges (components remaining: {comps})")
-        print(f"   📊 Phase A Stats: {phase_a_stats['edge_tests']:,} tests, {phase_a_stats['connections_found']:,} connections, {phase_a_stats['success_rate']:.1%} success rate")
+        print(f"      Phase A Stats: {phase_a_stats['edge_tests']:,} tests, {phase_a_stats['connections_found']:,} connections, {phase_a_stats['success_rate']:.1%} success rate")
     
     # Phase B: Farthest-point condensation (exactly 3 rounds)
     if verbose:
-        print(f"\n🔄 PHASE B: Farthest-point Condensation ({t} rounds)")
+        print(f"\n   PHASE B: Farthest-point Condensation ({t} rounds)")
     
     condensed_graph, phase_b_stats = farthest_point_condense_bio_binary(all_sections, tree_edges, edge_oracle, get_edge_data, t, K, verbose)
     
     if verbose:
-        print(f"   📊 Phase B Stats: {phase_b_stats['total_tests']:,} tests, {phase_b_stats['connections_found']:,} connections, {phase_b_stats['success_rate']:.1%} success rate")
+        print(f"     Phase B Stats: {phase_b_stats['total_tests']:,} tests, {phase_b_stats['connections_found']:,} connections, {phase_b_stats['success_rate']:.1%} success rate")
         for round_num, round_stats in enumerate(phase_b_stats['rounds'], 1):
             print(f"      Round {round_num}: {round_stats['tests']:,} tests, {round_stats['connections']:,} connections")
     
     # Phase C: Double-sweep BFS ordering
     if verbose:
-        print("\n🔄 PHASE C: Double-sweep BFS Ordering")
+        print("\n  PHASE C: Double-sweep BFS Ordering")
     
     rough_order = double_sweep_order_bio(all_sections, condensed_graph, verbose)
     
     # Phase D: K-window densification
     if verbose:
-        print("\n🔄 PHASE D: K-window Densification")
+        print("\n  PHASE D: K-window Densification")
     
     window_edges, phase_d_stats = k_window_edges_bio_binary(all_sections, rough_order, edge_oracle, get_edge_data, K, verbose)
     
     if verbose:
-        print(f"   📊 Phase D Stats: {phase_d_stats['window_tests']:,} tests, {phase_d_stats['connections_found']:,} connections")
+        print(f"      Phase D Stats: {phase_d_stats['window_tests']:,} tests, {phase_d_stats['connections_found']:,} connections")
         print(f"      Window success rate: {phase_d_stats['success_rate']:.1%}")
         print(f"      Average connections per vertex: {phase_d_stats['average_connections_per_vertex']:.1f}")
     
@@ -922,16 +922,16 @@ def build_and_order_sublinear(all_sections, edge_oracle, get_edge_data, verbose=
     # Phase E: Final ordering (spectral is optional)
     if use_spectral:
         if verbose:
-            print("\n🔄 PHASE E: Final Spectral Ordering")
+            print("\n   PHASE E: Final Spectral Ordering")
         final_order = spectral_order_bio(all_sections, condensed_graph, rough_order, verbose)
     else:
         if verbose:
-            print("\n🔄 PHASE E: Using BFS ordering (spectral disabled)")
+            print("\n   PHASE E: Using BFS ordering (spectral disabled)")
         final_order = rough_order
     
     # Phase F: Final K-densification verification on spectral output
     if verbose:
-        print("\n🔄 PHASE F: Final K-densification Verification")
+        print("\n   PHASE F: Final K-densification Verification")
         print(f"   Verifying K-neighbor density on final ordering...")
     
     phase_f_stats = final_k_densification_verification(
@@ -950,7 +950,7 @@ def build_and_order_sublinear(all_sections, edge_oracle, get_edge_data, verbose=
         if verbose:
             print(f"   Found {phase_f_stats['connections_found']} additional edges")
             if phase_f_stats['connections_found'] > 0:
-                print(f"   💡 Consider re-running spectral ordering with these additional edges")
+                print(f"    Consider re-running spectral ordering with these additional edges")
     
     # Compile comprehensive statistics
     # Combine tree structure information from Phase A
@@ -1175,20 +1175,20 @@ def short_edge_boruvka_bio_binary(all_sections, edge_oracle, get_edge_data, s, s
         phase += 1
         if verbose:
             print(f"   Borůvka phase {phase}: {dsu.components} components remaining")
-        # >>>>>>>>>>>>>>>>>>>> 在这里插入 <<<<<<<<<<<<<<<<<<
-        if dsu.components <= 20:        # 只在组件数比较少时打印，太多会刷屏
+        # >>>>>>>>>>>>>>>>>>>> here to insert <<<<<<<<<<<<<<<<<<
+        if dsu.components <= 20:        # only print when components are few, too many will flood the screen
             from collections import defaultdict
             comp_map = defaultdict(list)
             for idx, sec in enumerate(all_sections):
-                root = dsu.find(idx)     # DSU 里查根
+                root = dsu.find(idx)     # find root in DSU
                 comp_map[root].append(sec)
 
-            # 把每个连通块按 section 编号排序后输出
+            # sort each connected component by section number and output
             print("      🔍 Current components:")
             for cid, members in comp_map.items():
                 members.sort()
                 print(f"        • {members}")
-                # 也可以写到文件:
+                # also write to file:
                 # with open("remaining_components.txt", "a") as f:
                 #     f.write(f"Phase {phase} | Component {cid}: {members}\n")        
         phase_connections = 0
@@ -2014,8 +2014,8 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
     
     print("=== COMPREHENSIVE PAIRWISE ANALYSIS (ALL SECTIONS) ===")
     if build_and_order:
-        print("🎯 BUILD-AND-ORDER MODE: Using theoretical algorithm")
-        print("📚 THEORETICAL ALGORITHM: 5-phase sub-quadratic ordering")
+        print(" BUILD-AND-ORDER MODE: Using theoretical algorithm")
+        print(" THEORETICAL ALGORITHM: 5-phase sub-quadratic ordering")
         if use_spectral:
             print("   Phase E: Spectral ordering ENABLED")
         else:
@@ -2023,7 +2023,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         if verbose:
             print("   Verbose mode enabled - detailed algorithmic walkthrough will follow")
     elif sublinear:
-        print("🎯 SUBLINEAR MODE: Using Randomized Borůvka algorithm")
+        print(" SUBLINEAR MODE: Using Randomized Borůvka algorithm")
         print("⚠️  This approach is UNDER CONSTRUCTION")
         if verbose:
             print("   Verbose mode enabled - detailed algorithmic walkthrough will follow")
@@ -2032,21 +2032,21 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         
     if cache_sift:
         if precompute_sift:
-            print("🚀 SIFT caching + pre-computation enabled - all features computed upfront with progress tracking")
+            print(" SIFT caching + pre-computation enabled - all features computed upfront with progress tracking")
         else:
-            print("🚀 SIFT caching enabled - features computed lazily as needed")
+            print(" SIFT caching enabled - features computed lazily as needed")
     if fast_flann:
         print("⚡ Fast FLANN enabled - 2-3x faster matching with minimal accuracy loss")
     if two_phase:
-        print(f"🎯 Two-phase analysis enabled - relaxed → strict with proximity mask (window: {proximity_window})")
+        print(f" Two-phase analysis enabled - relaxed → strict with proximity mask (window: {proximity_window})")
     if auto_tune_threshold:
-        print("🎯 Auto-tune threshold enabled - will analyze node degrees to find optimal threshold")
+        print(" Auto-tune threshold enabled - will analyze node degrees to find optimal threshold")
     if edge_mask is not None:
-        print(f"🎯 Edge mask provided - {len(edge_mask):,} permissible pairs")
+        print(f" Edge mask provided - {len(edge_mask):,} permissible pairs")
     if visualize:
-        print("📊 Visualization enabled - spanning tree and results will be visualized")
+        print(" Visualization enabled - spanning tree and results will be visualized")
     
-    print(f"🎯 Strong connection criteria (similarity thresholds):")
+    print(f" Strong connection criteria (similarity thresholds):")
     print(f"   • SSIM > {ssim_threshold}")
     print(f"   • Rotation: -90° to +90°")
     print(f"   • Scale: 0.8 to 1.25 (both X and Y)")
@@ -2098,16 +2098,16 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
     
     # Optional upfront SIFT computation with proper cache file path
     if cache_sift and precompute_sift:
-        print("\n🔄 Pre-computing SIFT features for all sections (one-time step)…")
+        print("\n Pre-computing SIFT features for all sections (one-time step)…")
         cache_file = os.path.join(output_dir, "sift_features_cache.pkl")
         precompute_all_sift_features(images, cache_file=cache_file)
     elif cache_sift:
-        print("\n💾 SIFT caching enabled - features will be computed lazily as needed")
+        print("\n SIFT caching enabled - features will be computed lazily as needed")
     
     # Handle two-phase mode
     if two_phase:
         if verbose:
-            print(f"\n🎯 TWO-PHASE ANALYSIS MODE")
+            print(f"\n TWO-PHASE ANALYSIS MODE")
             print(f"   Phase 1: Relaxed threshold → linear order")
             print(f"   Phase 2: Strict threshold + proximity mask")
         
@@ -2150,7 +2150,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         proximity_mask = create_proximity_mask(linear_order, proximity_window)
         
         if verbose:
-            print(f"\n🔄 PHASE 2: Strict Analysis with Proximity Mask")
+            print(f"\n PHASE 2: Strict Analysis with Proximity Mask")
             print(f"   Proximity mask: {len(proximity_mask):,} permissible pairs")
         
         # Phase 2: Run with strict threshold + proximity mask
@@ -2198,7 +2198,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         if edge_mask is not None:
             if (sec1, sec2) not in edge_mask:
                 if verbose:
-                    print(f"      🚫 Edge mask filtered: {sec1} ↔ {sec2} (not in permissible set)")
+                    print(f"       Edge mask filtered: {sec1} ↔ {sec2} (not in permissible set)")
                 return False
         
         # Check if already computed
@@ -2325,7 +2325,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
     
     # Choose analysis approach
     if build_and_order:
-        print(f"\n🎯 Running BUILD-AND-ORDER analysis...")
+        print(f"\n Running BUILD-AND-ORDER analysis...")
         start_time = time.time()
         
         # Create edge data retrieval function using data_manager
@@ -2345,7 +2345,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         # Get accurate statistics from data_manager
         dm_stats = data_manager.get_statistics()
         
-        print(f"\n🎯 BUILD-AND-ORDER ANALYSIS COMPLETE!")
+        print(f"\n  BUILD-AND-ORDER ANALYSIS COMPLETE!")
         print(f"   Algorithm: {build_order_stats['algorithm']}")
         print(f"   K (window size): {build_order_stats['parameters']['K']}")
         print(f"   t (condensation rounds): {build_order_stats['parameters']['t']}")
@@ -2355,7 +2355,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         print(f"   Rough order quality: {build_order_stats['rough_order_quality']:.3f}")
         print(f"   Final order quality: {build_order_stats['final_order_quality']:.3f}")
         print(f"   Total computation time: {elapsed_time:.1f} seconds")
-        print(f"\n📊 DETAILED PHASE STATISTICS:")
+        print(f"\n  DETAILED PHASE STATISTICS:")
         print(f"   Phase A (Borůvka): {build_order_stats['phase_a']['edge_tests']:,} tests, {build_order_stats['phase_a']['connections_found']:,} connections ({build_order_stats['phase_a']['success_rate']:.1%} success)")
         print(f"   Phase B (Condensation): {build_order_stats['phase_b']['total_tests']:,} tests, {build_order_stats['phase_b']['connections_found']:,} connections ({build_order_stats['phase_b']['success_rate']:.1%} success)")
         print(f"   Phase D (K-window): {build_order_stats['phase_d']['window_tests']:,} tests, {build_order_stats['phase_d']['connections_found']:,} connections")
@@ -2366,15 +2366,15 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         print(f"      Overall success rate: {build_order_stats['phase_f']['success_rate']:.1%}")
         print(f"      NEW computations success rate: {build_order_stats['phase_f']['newly_computed_success_rate']:.1%}")
         if build_order_stats['phase_f']['newly_computed_connections'] > 0:
-            print(f"      💡 Found {build_order_stats['phase_f']['newly_computed_connections']} NEW additional local connections")
+            print(f"       Found {build_order_stats['phase_f']['newly_computed_connections']} NEW additional local connections")
             print(f"      Average gap: {build_order_stats['phase_f']['average_gap']:.1f}, Max gap: {build_order_stats['phase_f']['max_gap']}")
         else:
             print(f"      ✅ Perfect K-densification: No new local connections discovered!")
         if build_order_stats['phase_d']['success_rate'] < 0.15:
-            print(f"      💡 Consider increasing K from {build_order_stats['parameters']['K']} to find more connections")
+            print(f"       Consider increasing K from {build_order_stats['parameters']['K']} to find more connections")
         elif build_order_stats['phase_d']['success_rate'] > 0.8:
-            print(f"      💡 Consider decreasing K from {build_order_stats['parameters']['K']} to reduce computation")
-        print(f"\n📊 EFFICIENCY STATISTICS:")
+            print(f"       Consider decreasing K from {build_order_stats['parameters']['K']} to reduce computation")
+        print(f"\n EFFICIENCY STATISTICS:")
         print(f"   Unique pairs computed: {dm_stats['unique_pairs_computed']:,}")
         print(f"   Total oracle calls: {dm_stats['total_oracle_calls']:,}")
         print(f"   Cache hits: {dm_stats['cache_hits']:,}")
@@ -2384,7 +2384,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         
         # Print edge mask statistics if provided
         if edge_mask is not None:
-            print(f"\n📊 EDGE MASK STATISTICS:")
+            print(f"\n EDGE MASK STATISTICS:")
             print(f"   Permissible pairs: {len(edge_mask):,}")
             print(f"   Total possible pairs: {len(all_sections) * (len(all_sections) - 1) // 2:,}")
             print(f"   Mask density: {len(edge_mask) / (len(all_sections) * (len(all_sections) - 1) // 2):.1%}")
@@ -2413,7 +2413,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         # 4. Tree structure analysis
         if 'tree_diameter' in build_order_stats:
             diameter_info = build_order_stats['tree_diameter']
-            print(f"\n📊 TREE STRUCTURE ANALYSIS:")
+            print(f"\n TREE STRUCTURE ANALYSIS:")
             print(f"   Tree diameter: {diameter_info['diameter']} hops")
             print(f"   Diameter endpoints: {diameter_info['endpoints'][0]} ↔ {diameter_info['endpoints'][1]}")
             print(f"   Center nodes: {diameter_info['center_nodes']}")
@@ -2481,7 +2481,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         
         # Create visualization if requested
         if visualize:
-            print(f"\n📊 Creating BUILD-AND-ORDER visualization...")
+            print(f"\n Creating BUILD-AND-ORDER visualization...")
             # For now, reuse existing visualization with adapted stats
             boruvka_style_stats = {
                 'algorithm': 'BUILD-AND-ORDER',
@@ -2499,7 +2499,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
                 all_sections, results, output_dir, boruvka_style_stats
             )
         
-        print(f"\n📁 Results saved to: {output_dir}/")
+        print(f"\n Results saved to: {output_dir}/")
         print(f"   Final order: {final_order_file}")
         print(f"   Statistics: {stats_file}")
         if visualize:
@@ -2509,7 +2509,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         return data_manager.export_to_dataframe(), data_manager.get_pipeline_valid_pairs()
     
     elif sublinear:
-        print(f"\n🎯 Running SUBLINEAR analysis...")
+        print(f"\n Running SUBLINEAR analysis...")
         start_time = time.time()
         
         # Run sublinear analysis
@@ -2524,7 +2524,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         # Get accurate statistics from data_manager
         dm_stats = data_manager.get_statistics()
         
-        print(f"\n🎯 SUBLINEAR ANALYSIS COMPLETE!")
+        print(f"\n SUBLINEAR ANALYSIS COMPLETE!")
         print(f"   Algorithm: Randomized Borůvka")
         print(f"   Spanning tree edges: {len(spanning_tree)}")
         print(f"   Total phases: {boruvka_stats['total_phases']}")
@@ -2533,7 +2533,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         print(f"   Reduction factor: {boruvka_stats['reduction_factor']:.1f}x")
         print(f"   Success rate: {(boruvka_stats['total_successful_hooks'] / boruvka_stats['total_edge_tests'] * 100):.1f}%")
         print(f"   Total computation time: {elapsed_time:.1f} seconds")
-        print(f"\n📊 EFFICIENCY STATISTICS:")
+        print(f"\n EFFICIENCY STATISTICS:")
         print(f"   Unique pairs computed: {dm_stats['unique_pairs_computed']:,}")
         print(f"   Total oracle calls: {dm_stats['total_oracle_calls']:,}")
         print(f"   Cache hits: {dm_stats['cache_hits']:,}")
@@ -2543,7 +2543,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
         
         # Print edge mask statistics if provided
         if edge_mask is not None:
-            print(f"\n📊 EDGE MASK STATISTICS:")
+            print(f"\n EDGE MASK STATISTICS:")
             print(f"   Permissible pairs: {len(edge_mask):,}")
             print(f"   Total possible pairs: {len(all_sections) * (len(all_sections) - 1) // 2:,}")
             print(f"   Mask density: {len(edge_mask) / (len(all_sections) * (len(all_sections) - 1) // 2):.1%}")
@@ -2793,7 +2793,7 @@ def comprehensive_pairwise_analysis(cache_sift=False, precompute_sift=False, fas
                     f.write(f"Min SSIM: {np.min(ssim_scores):.3f}\n")
                     f.write(f"Max SSIM: {np.max(ssim_scores):.3f}\n")
         
-        print(f"\n📁 Results saved to: {output_dir}/")
+        print(f"\n Results saved to: {output_dir}/")
         print(f"   Complete results: {results_file}")
         print(f"   Summary: {summary_file}")
         
@@ -3175,20 +3175,20 @@ Performance Optimizations:
 
 Examples:
   # Recommended: BUILD-AND-ORDER with optimizations
-  python comprehensive_pairwise_analysis.py --build-and-order --cache-sift --fast-flann --verbose
+  python Graph-Condensation-Densification.py --build-and-order --cache-sift --fast-flann --verbose
   
   # Baseline test with specific parameters  
-  python comprehensive_pairwise_analysis.py --build-and-order --samples-per-phase 7 --window-k 7
+  python Graph-Condensation-Densification.py --build-and-order --samples-per-phase 7 --window-k 7
   
   # Auto-tune SSIM threshold for optimal connectivity
-  python comprehensive_pairwise_analysis.py --build-and-order --auto-tune-threshold --verbose
+  python Graph-Condensation-Densification.py --build-and-order --auto-tune-threshold --verbose
   
   # Two-phase analysis: relaxed → strict with proximity mask
-  python comprehensive_pairwise_analysis.py --build-and-order --two-phase --proximity-window 15
+  python Graph-Condensation-Densification.py --build-and-order --two-phase --proximity-window 15
   
   # Pre-compute all SIFT features upfront
-  python comprehensive_pairwise_analysis.py --build-and-order --precompute-sift --verbose
-  python comprehensive_pairwise_analysis.py --window-k 10                # Override K (window half-width) for K-window densification
+  python Graph-Condensation-Densification.py --build-and-order --precompute-sift --verbose
+  python Graph-Condensation-Densification.py --window-k 10                # Override K (window half-width) for K-window densification
   
 Performance comparison:
   Complete (no optimizations):    ~11,130 SIFT computations, standard FLANN (4+ hours)
@@ -3312,7 +3312,7 @@ Auto-Tune Threshold (--auto-tune-threshold):
         print("   Note: Spectral ordering disabled - will use BFS diameter ordering")
     
     if args.sublinear:
-        print("\n🎯 SUBLINEAR MODE SELECTED:")
+        print("\n SUBLINEAR MODE SELECTED:")
         print("   Algorithm: Randomized Borůvka spanning tree construction")
         print("   ⚠️  EXPERIMENTAL: This approach is under development")
         print("   ✅ O(N log²N) complexity instead of O(N²)")
@@ -3338,7 +3338,7 @@ Auto-Tune Threshold (--auto-tune-threshold):
     # Parse edge mask if provided
     edge_mask = None
     if args.edge_mask:
-        print(f"\n📂 Loading edge mask from: {args.edge_mask}")
+        print(f"\n Loading edge mask from: {args.edge_mask}")
         try:
             edge_mask_df = pd.read_csv(args.edge_mask)
             edge_mask = set(zip(edge_mask_df.iloc[:, 0], edge_mask_df.iloc[:, 1]))
@@ -3376,9 +3376,9 @@ Auto-Tune Threshold (--auto-tune-threshold):
     total_time = time.perf_counter() - start_time
     
     # Generate comprehensive final report
-    print(f"\n🎯 PIPELINE EXECUTION COMPLETE!")
+    print(f"\n PIPELINE EXECUTION COMPLETE!")
     print(f"=" * 80)
-    print(f"📊 FINAL PERFORMANCE SUMMARY:")
+    print(f" FINAL PERFORMANCE SUMMARY:")
     print(f"   Total runtime: {total_time:.1f} seconds ({total_time/60:.1f} minutes)")
     
     # Unpack and analyze results
@@ -3389,13 +3389,13 @@ Auto-Tune Threshold (--auto-tune-threshold):
             if hasattr(pipeline_valid_df, 'iloc') and 'ssim_score' in pipeline_valid_df.columns:
                 avg_ssim = pipeline_valid_df['ssim_score'].mean()
                 print(f"   Average SSIM score: {avg_ssim:.3f}")
-            print(f"   ✅ Pipeline validation SUCCESS!")
+            print(f"     Pipeline validation SUCCESS!")
             print(f"   These connections form the basis for spectral clustering and linear ordering")
         else:
-            print(f"   ⚠️  No strong connections found")
+            print(f"       No strong connections found")
             print(f"   Consider lowering --ssim-threshold or checking input data quality")
     else:
-        print(f"   📊 Analysis completed - check output directory for detailed results")
+        print(f"     Analysis completed - check output directory for detailed results")
     
     print(f"=" * 80)
 
