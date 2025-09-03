@@ -1,5 +1,5 @@
 """
-Build and connect seriation chains from pairwise alignment scores.
+Build and connect seriation chains after Clean_csv.py
 
 Overview
 --------
