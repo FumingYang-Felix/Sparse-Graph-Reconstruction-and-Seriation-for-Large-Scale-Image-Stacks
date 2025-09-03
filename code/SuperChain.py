@@ -1,3 +1,93 @@
+"""
+Build and connect seriation chains from pairwise alignment scores.
+
+Overview
+--------
+This script ingests a CSV of pairwise alignment scores between section names,
+derives each section’s best/second-best neighbor, groups them into chains,
+optionally stitches chains using second-best hints, and finally attempts to
+link all super-chains into one global order.
+
+Accepted section name patterns (already handled in NAME_PAT):
+  • 'section_<num>_r01_c01'          e.g., section_123_r01_c01
+  • 'S_<num>' with optional suffixes  e.g., S_01094_inverted_cropped
+
+Input
+-----
+CSV file with **exact** column headers:
+    fixed,moving,score
+
+Example:
+    fixed,moving,score
+    S_01094_inverted_cropped,S_01108_inverted_cropped,0.9123
+    S_01108_inverted_cropped,S_01095_inverted_cropped,0.8877
+    section_12_r01_c01,section_13_r01_c01,0.7654
+
+Requirements
+------------
+• Python 3.8+ (recommended 3.9+)
+• pandas:  `pip install pandas`
+
+Usage
+-----
+Basic run (prints results to terminal and writes a report file):
+    python3 chain_stitch.py \
+        --csv new_pairwise_filtered.csv \
+        --output best_pair_chains_graph.txt
+
+Tip: save console output too:
+    python3 chain_stitch.py -c pairwise.csv -o best_pair_chains_graph.txt | tee run.log
+
+What you get
+------------
+Console + report file include five sections:
+
+STEP 1: Each section’s BEST pair
+    The highest-scoring neighbor for every section.
+
+STEP 2: Chain grouping (undirected graph)
+    Uses only the BEST pairs; produces disjoint, non-overlapping chains
+    (each section appears exactly once).
+
+STEP 3: Each section’s SECOND-BEST pair
+    Second-highest neighbor per section (if any).
+
+STEP 4: Stitch algorithm merges
+    Uses second-best candidates to merge chains where possible, respecting
+    internal order (‘head/tail’-only concatenations).
+
+STEP 5: Global linking by CSV scores
+    Tries to connect the remaining super-chains into a single final chain
+    based on the highest available endpoint scores.
+    If not fully connectable, prints residual final chains.
+
+A short SUMMARY is appended (counts of sections/chains, etc.).
+
+Notes & Behavior
+----------------
+• The script never renumbers or re-sorts sections; it preserves discovered
+  chain order and only reverses at chain ends when merging.
+• If multiple chain connections are possible, the highest score wins per round.
+• Deterministic given the same CSV.
+• If your naming scheme differs, update NAME_PAT near the top of the script.
+
+Troubleshooting
+---------------
+• KeyError: 'fixed' / 'moving' / 'score'
+  → CSV headers must be exactly those names.
+
+• ValueError converting 'score'
+  → Ensure the score column is numeric (no 'NA', strings, etc.).
+
+• Names not detected / missing in chains
+  → Your IDs may not match NAME_PAT; adjust the regex to cover your format.
+
+• Large CSV performance
+  → Pre-deduplicate pairs externally (keep max score per unordered pair) to
+    reduce size; the loader also keeps only the maximum per pair.
+
+"""
+
 import re
 import csv
 import pandas as pd
