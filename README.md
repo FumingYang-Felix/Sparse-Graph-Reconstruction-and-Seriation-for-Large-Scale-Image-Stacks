@@ -324,7 +324,9 @@ If you use this toolkit in academic work, please cite this repository (author: *
 
 ## Contact
 
-Maintainer: **Fuming Yang** (`FumingYang-Felix`)  fumingyang@fas.harvard.edu
-Issues and feature requests are welcome via GitHub Issues or email.
+Questions, issues, or ideas for improvements are very welcome:
 
+📧 fumingyang@fas.harvard.edu
+
+Contributions (bug reports, PRs) are appreciated — please open an issue or pull request on GitHub with a clear description and reproduction steps.
 _Last updated: 2025-09-03_
