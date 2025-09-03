@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-BUILD-AND-ORDER Algorithm Overview:
+Graph-Condensation-Densification (GCD) Algorithm Overview:
   • Phase A: Short-edge Borůvka tree construction - O(N log N) complexity
   • Phase B: Farthest-point condensation - densifies connectivity  
   • Phase C: Double-sweep BFS for diameter-based ordering
