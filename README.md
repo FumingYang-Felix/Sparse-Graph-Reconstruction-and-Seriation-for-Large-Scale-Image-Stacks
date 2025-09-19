@@ -1,22 +1,23 @@
 # GCD Seriation Toolkit — Graph‑Condensation‑Densification + CSV Clean + Chain Stitch
 
 
-
+<!-- MP4 直接内联播放（GitHub README 支持的写法） -->
 <video
   width="100%"
+  playsinline
+  muted
   autoplay
   loop
-  muted
-  playsinline
   controls
-  style="max-width:100%;height:auto;"
+  preload="metadata"
+  style="max-width: 100%; height: auto;"
 >
-  <!-- 主：raw.githubusercontent.com 直链（最稳） -->
+  <!-- 直链 #1：repo/raw（GitHub 会 302 到 raw 域名，并返回 video/mp4） -->
+  <source src="https://github.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/raw/main/GCD-demo.mp4" type="video/mp4">
+  <!-- 直链 #2：raw.githubusercontent（备用） -->
   <source src="https://raw.githubusercontent.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/main/GCD-demo.mp4" type="video/mp4">
-  <!-- 备：相对路径加 ?raw=1 -->
-  <source src="GCD-demo.mp4?raw=1" type="video/mp4">
   Your browser doesn’t support embedded videos.
-  <a href="https://raw.githubusercontent.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/main/GCD-demo.mp4">Download MP4</a>
+  <a href="https://github.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/raw/main/GCD-demo.mp4">Download MP4</a>
 </video>
 
 
