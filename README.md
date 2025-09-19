@@ -2,7 +2,7 @@
 
 <p align="center">
   <video
-    src="https://github.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/releases/download/v1/<FILENAME>"
+    src="https://github.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/releases/download/v1/GCD-demo.mp4"
     width="100%"
     controls
     autoplay
