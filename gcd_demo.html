@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GCD Demo — Steps 1–5</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/framer-motion/dist/framer-motion.umd.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    html, body { background: #0a0a0e; }
+  </style>
+</head>
+<body class="min-h-screen antialiased">
+  <div id="root" class="p-4 sm:p-8"></div>
+
+  <script type="text/babel">
+    const { useMemo, useRef, useState, useEffect, useLayoutEffect } = React;
+    const { motion, AnimatePresence } = window.framerMotion;
+
+    // ============ Utilities ============
+    const letters = ["A","B","C","D","E","F","G","H"];
+
+    function useLayout(width, order, padding = 96) {
+      const coordW = Math.max(0, width);
+      const inner = Math.max(0, coordW - padding * 2);
+      const gap = inner / (order.length - 1);
+      const nodes = order.map((ch, i) => ({ id: ch, x: padding + gap * i, y: 160 }));
+      return { nodes, coordW };
+    }
+    const wait = (ms) => new Promise(r => setTimeout(r, ms));
+    const sameUndirected = (a, b) => (a.from === b.from && a.to === b.to) || (a.from === b.to && a.to === b.from);
+    const midOf = (a, b, map) => { const A = map[a]; const B = map[b]; return { x: (A.x + B.x)/2, y: (A.y + B.y)/2 }; };
+
+    // ============ Main Demo ============
+    function GCDDemo() {
+      const frameRef = useRef(null);
+      const [w, setW] = useState(960);
+      const [phaseText, setPhaseText] = useState("Step 1 - Place nodes A-H on a line");
+      const [focus, setFocus] = useState(null);
+      const [selected, setSelected] = useState(new Set());
+      const [scanFrontier, setScanFrontier] = useState(new Set());
+      const [swapPulse, setSwapPulse] = useState(new Set());
+      const [order, setOrder] = useState([...letters]);
+      const [edges, setEdges] = useState([]);
+      const [winIds, setWinIds] = useState([]);
+      const [gate, setGate] = useState({ x: 0, y: 0, status: "hidden" });
+      const [playing, setPlaying] = useState(false);
+
+      // live ref of edges to avoid stale async reads
+      const edgesRef = useRef([]);
+      useEffect(() => { edgesRef.current = edges; }, [edges]);
+
+      // measure width
+      useEffect(() => {
+        const el = frameRef.current;
+        if (!el) return;
+        const ro = new ResizeObserver(() => setW(el.clientWidth));
+        ro.observe(el);
+        setW(el.clientWidth);
+        return () => ro.disconnect();
+      }, []);
+      useLayoutEffect(() => {
+        const el = frameRef.current; if (el) setW(el.clientWidth);
+      }, []);
+
+      const { nodes, coordW } = useLayout(w, order);
+      const nodeMap = useMemo(() => Object.fromEntries(nodes.map(n => [n.id, n])), [nodes]);
+
+      const T = {
+        betweenPhases: 1300,
+        check: 1200,
+        afterDecision: 1400,
+        betweenNodes: 1500,
+        trace: 500,
+        waveNode: 450,
+        waveEdge: 350,
+        swapPause: 650,
+        winSlide: 600,
+      };
+      const THRESH = 0.6;
+
+      // ========== Step 1 ==========
+      const playStep1 = async () => {
+        if (playing) return;
+        setPlaying(true);
+        setSelected(new Set()); setScanFrontier(new Set()); setSwapPulse(new Set());
+        setGate({ x: 0, y: 0, status: "hidden" });
+        setEdges([]);
+        setOrder([...letters]);
+
+        // A
+        setPhaseText("Step 1 - Start from node A (log N pick)");
+        setFocus("A");
+        await wait(T.betweenPhases);
+        await attempt("A", "H", false, 0.42);
+        await wait(T.afterDecision);
+        await attempt("A", "C", true, 0.85);
+        await wait(T.betweenNodes);
+
+        // B
+        purgeRejects();
+        setPhaseText("Step 1 - Move to node B (re-sample)");
+        setFocus("B");
+        await wait(T.betweenPhases);
+        await attempt("B", "F", false, 0.49);
+        await wait(900);
+        await attempt("B", "D", true, 0.78);
+        await wait(T.betweenNodes);
+
+        // C
+        purgeRejects();
+        setPhaseText("Step 1 - Move to node C");
+        setFocus("C");
+        await wait(T.betweenPhases);
+        await attempt("C", "E", true, 0.88);
+        await wait(T.betweenNodes);
+
+        // D
+        purgeRejects();
+        setPhaseText("Step 1 - Move to node D");
+        setFocus("D");
+        await wait(T.betweenPhases);
+        await attempt("D", "H", false, 0.41);
+        await wait(900);
+        await attempt("D", "G", false, 0.55);
+        await wait(900);
+        await attempt("D", "F", true, 0.76);
+        await wait(T.betweenNodes);
+
+        // E
+        purgeRejects();
+        setPhaseText("Step 1 - Move to node E");
+        setFocus("E");
+        await wait(T.betweenPhases);
+        await attempt("E", "G", true, 0.83);
+        await wait(T.betweenNodes);
+
+        // F
+        purgeRejects();
+        setPhaseText("Step 1 - Move to node F");
+        setFocus("F");
+        await wait(T.betweenPhases);
+        await attempt("F", "H", true, 0.86);
+        await wait(T.betweenNodes);
+
+        // H
+        purgeRejects();
+        setPhaseText("Step 1 - Move to node H");
+        setFocus("H");
+        await wait(T.betweenPhases);
+        await attempt("H", "G", true, 0.81);
+        await wait(T.afterDecision);
+
+        setPhaseText("Step 1 - Round complete");
+        setPlaying(false);
+      };
+
+      // ========== Step 2 ==========
+      const playStep2 = async () => {
+        if (playing) return;
+        setPlaying(true);
+        setGate({ x: 0, y: 0, status: "hidden" });
+        setSelected(new Set()); setScanFrontier(new Set()); setSwapPulse(new Set()); setFocus(null);
+
+        const rounds = [
+          ["A", "B", 0.90],
+          ["E", "D", 0.91],
+          ["B", "G", 0.87],
+        ];
+
+        for (let i = 0; i < rounds.length; i++) {
+          const adj = buildAdjacency(edges.filter(e => e.kind === "accept"));
+          setPhaseText(`Step 2 - Condensation: searching farthest pair (Round ${i+1})...`);
+          const { path } = findDiameter(adj);
+          await waveAlongPath(path);
+
+          const [uTarget, vTarget, score] = rounds[i];
+          setSelected(new Set([uTarget, vTarget]));
+          await wait(700);
+          setPhaseText(`Step 2 - Condensation: link ${uTarget}<->${vTarget}`);
+          await attempt(uTarget, vTarget, true, score);
+          await wait(T.betweenNodes);
+        }
+
+        setScanFrontier(new Set());
+        setPhaseText("Step 2 - Condensation: 3 rounds complete");
+        setGate({ x: 0, y: 0, status: "hidden" });
+        setPlaying(false);
+      };
+
+      // ========== Step 3 ==========
+      const playStep3 = async () => {
+        if (playing) return;
+        setPlaying(true);
+        setPhaseText("Step 3 - Double-swap BFS: BFS scan of current graph...");
+        setSelected(new Set()); setFocus(null); setSwapPulse(new Set());
+
+        const adj = buildAdjacency(edges.filter(e => e.kind === "accept"));
+        const bfsOrder = bfsOrderList("A", adj);
+        await waveOverOrder(bfsOrder);
+
+        setPhaseText("Step 3 - Double-swap: bring C next to A (swap B<->C)");
+        await pulseSwap(["B","C"]); swapOrderByIds("B","C"); await wait(T.swapPause);
+
+        setPhaseText("Step 3 - Double-swap: place E before D (swap D<->E)");
+        await pulseSwap(["D","E"]); swapOrderByIds("D","E"); await wait(T.swapPause);
+
+        setPhaseText("Step 3 - Double-swap: place G before F (swap F<->G)");
+        await pulseSwap(["F","G"]); swapOrderByIds("F","G"); await wait(T.swapPause);
+
+        setPhaseText("Step 3 - Backbone complete: A C B E D G F H");
+        setPlaying(false);
+      };
+
+      // ========== Step 4 ==========
+      const playStep4 = async () => {
+        if (playing) return;
+        setPlaying(true);
+        setFocus(null); setSelected(new Set()); setScanFrontier(new Set());
+        setPhaseText("Step 4 - K-window Densification (K=4): starting at A...");
+
+        const slide = async (ids, title) => {
+          setWinIds(ids); if (title) setPhaseText(title); await wait(T.winSlide);
+        };
+
+        const hi = async (u, v, ms = 600, preferTier) => {
+          const t = preferTier ?? getAcceptedTier(u, v);
+          setEdges(prev => [...prev, { from: u, to: v, kind: "trace", tier: t }]);
+          await wait(ms);
+          setEdges(prev => prev.filter(e => !(e.kind === "trace" && sameUndirected(e, { from: u, to: v }))));
+        };
+
+        const connectOrReject = async (u, v, accept, score) => {
+          const exists = edges.some(e => e.kind === "accept" && sameUndirected(e, { from: u, to: v }));
+          if (exists) { await hi(u, v); return; }
+          await attemptS4(u, v, accept, score);
+          if (accept) await hi(u, v, 600, 4);
+        };
+
+        // A
+        setFocus("A");
+        await slide(["A","C","B","E"], "Step 4 - A's window: A C B E (full pairwise)");
+        await hi("A","C");
+        await hi("A","B");
+        await connectOrReject("A","E", false, 0.48);
+        setFocus(null);
+
+        // C
+        setFocus("C");
+        await slide(["C","B","E","D"], "Step 4 - C's window: C B E D (full pairwise)");
+        await connectOrReject("C","B", true, 0.82);
+        await hi("C","E");
+        await connectOrReject("C","D", true, 0.80);
+        setFocus(null);
+
+        // B
+        setFocus("B");
+        await slide(["B","E","D","G"], "Step 4 - B's window: B E D G (full pairwise)");
+        await connectOrReject("B","E", false, 0.45);
+        await hi("B","D");
+        await connectOrReject("B","G", true, 0.90);
+        setFocus(null);
+
+        // E
+        setFocus("E");
+        await slide(["E","D","G","F"], "Step 4 - E's window: E D G F (full pairwise)");
+        await hi("E","D");
+        await hi("E","G");
+        await connectOrReject("E","F", true, 0.84);
+        setFocus(null);
+
+        // D
+        setFocus("D");
+        await slide(["D","G","F","H"], "Step 4 - D's window: D G F H (full pairwise)");
+        await connectOrReject("D","G", false, 0.50);
+        await hi("D","F");
+        await connectOrReject("D","H", false, 0.44);
+        setFocus(null);
+
+        // G
+        setFocus("G");
+        await slide(["D","G","F","H"], "Step 4 - G's window: D G F H (full pairwise)");
+        await connectOrReject("G","F", true, 0.83);
+        await hi("G","H");
+        setFocus(null);
+
+        // F
+        setFocus("F");
+        await slide(["D","G","F","H"], "Step 4 - F's window: D G F H (full pairwise)");
+        await hi("F","E");
+        await hi("F","G");
+        await showReject("F","D", 0.50);
+        await showReject("F","H", 0.44);
+        setFocus(null);
+
+        // H
+        setFocus("H");
+        await slide(["D","G","F","H"], "Step 4 - H's window: D G F H (full pairwise)");
+        await hi("H","F");
+        await hi("H","G");
+        setFocus(null);
+
+        setWinIds([]);
+        await wait(300);
+        purgeRejects();
+        setPhaseText("Step 4 - K-window Densification complete");
+        setPlaying(false);
+      };
+
+      // ========== Step 5 ==========
+      const playStep5 = async () => {
+        if (playing) return;
+        setPlaying(true);
+        setSelected(new Set()); setScanFrontier(new Set()); setSwapPulse(new Set());
+
+        const hiEdge = async (u, v, ms = 550) => {
+          const t = getAcceptedTier(u, v);
+          setEdges(prev => [...prev, { from: u, to: v, kind: "trace", tier: t }]);
+          await wait(ms);
+          setEdges(prev => prev.filter(e => !(e.kind === "trace" && sameUndirected(e, { from: u, to: v }))));
+        };
+        const rejectAndRemove = async (u, v) => {
+          setEdges(prev => prev.map(e => (sameUndirected(e, { from: u, to: v }) && e.kind === "accept") ? { ...e, kind: "reject" } : e));
+          await wait(420);
+          setEdges(prev => prev.filter(e => !(sameUndirected(e, { from: u, to: v }) && e.kind !== "trace")));
+        };
+
+        // A
+        setPhaseText("Step 5 - SuperChains: A - animate current links");
+        setFocus("A"); await hiEdge("A","C"); await hiEdge("A","B"); setFocus(null); await wait(350);
+
+        // C
+        setPhaseText("Step 5 - SuperChains: C - highlight C-B, C-D; drop C-E");
+        setFocus("C"); await hiEdge("C","B"); await hiEdge("C","D"); await rejectAndRemove("C","E"); setFocus(null); await wait(350);
+
+        // B
+        setPhaseText("Step 5 - SuperChains: B - highlight B-A, B-C; drop B-D");
+        setFocus("B"); await hiEdge("B","A"); await hiEdge("B","C"); await rejectAndRemove("B","D"); setFocus(null); await wait(350);
+
+        // E
+        setPhaseText("Step 5 - SuperChains: E - highlight E-D, E-F; drop E-C, E-G");
+        setFocus("E"); await hiEdge("E","D"); await hiEdge("E","F"); await rejectAndRemove("E","C"); await rejectAndRemove("E","G"); setFocus(null); await wait(350);
+
+        // D
+        setPhaseText("Step 5 - SuperChains: D - highlight D-E, D-C; drop D-F, D-B");
+        setFocus("D"); await hiEdge("D","E"); await hiEdge("D","C"); await rejectAndRemove("D","F"); await rejectAndRemove("D","B"); setFocus(null); await wait(350);
+
+        // G
+        setPhaseText("Step 5 - SuperChains: G - highlight G-F, G-H; drop G-B, G-E");
+        setFocus("G"); await hiEdge("G","F"); await hiEdge("G","H"); await rejectAndRemove("G","B"); await rejectAndRemove("G","E"); setFocus(null); await wait(350);
+
+        // F
+        setPhaseText("Step 5 - SuperChains: F - highlight F-E, F-G; drop F-D");
+        setFocus("F"); await hiEdge("F","E"); await hiEdge("F","G"); await rejectAndRemove("F","D"); setFocus(null); await wait(350);
+
+        // H
+        setPhaseText("Step 5 - SuperChains: H - highlight H-F, H-G");
+        setFocus("H"); await hiEdge("H","F"); await hiEdge("H","G"); setFocus(null); await wait(350);
+
+        // remove A-C and H-F
+        setPhaseText("Step 5 - SuperChains: remove A-C and H-F");
+        await hiEdge("A","C"); await rejectAndRemove("A","C");
+        await hiEdge("H","F"); await rejectAndRemove("H","F");
+        await wait(350);
+
+        // swaps
+        setPhaseText("Step 5 - SuperChains: swap B<->C");
+        await pulseSwap(["B","C"]); swapOrderByIds("B","C"); await wait(T.swapPause);
+
+        setPhaseText("Step 5 - SuperChains: swap E<->D");
+        await pulseSwap(["E","D"]); swapOrderByIds("E","D"); await wait(T.swapPause);
+
+        setPhaseText("Step 5 - SuperChains: swap G<->F");
+        await pulseSwap(["G","F"]); swapOrderByIds("G","F"); await wait(T.swapPause);
+
+        setPhaseText("Step 5 - SuperChains Seriation complete");
+        setPlaying(false);
+      };
+
+      // ========== Auto Play (1->4) and (1->5) ==========
+      const playAll = async () => {
+        if (playing) return;
+        await playStep1(); await wait(900);
+        await playStep2(); await wait(900);
+        await playStep3(); await wait(900);
+        await playStep4();
+      };
+      const playAllTo5 = async () => {
+        if (playing) return;
+        await playAll(); await wait(900);
+        await playStep5();
+      };
+
+      // === shared helpers ===
+      async function attempt(from, to, accept, score) {
+        addEdge({ from, to, kind: "candidate" });
+        const mid = midOf(from, to, nodeMap);
+        setGate({ x: mid.x, y: mid.y - 54, status: "checking", score, threshold: THRESH });
+        await wait(T.check);
+        setGate(g => ({ ...g, status: accept ? "pass" : "fail" }));
+        replaceEdge({ from, to }, { from, to, kind: accept ? "accept" : "reject" });
+        setPhaseText(accept ? \`Step \${phaseText.startsWith("Step 2") ? 2 : 1} - \${from}->\${to} accepted (score >= threshold)\`
+                              : \`Step \${phaseText.startsWith("Step 2") ? 2 : 1} - \${from}->\${to} rejected (score < threshold)\`);
+        await wait(700);
+        setGate({ x: 0, y: 0, status: "hidden" });
+      }
+      async function attemptS4(from, to, accept, score) {
+        addEdge({ from, to, kind: "candidate", tier: 4 });
+        const mid = midOf(from, to, nodeMap);
+        setGate({ x: mid.x, y: mid.y - 54, status: "checking", score, threshold: THRESH });
+        await wait(T.check);
+        setGate(g => ({ ...g, status: accept ? "pass" : "fail" }));
+        replaceEdge({ from, to }, { from, to, kind: accept ? "accept" : "reject", tier: 4 });
+        setPhaseText(accept ? \`Step 4 - \${from}->\${to} accepted (densification)\`
+                            : \`Step 4 - \${from}->\${to} rejected (densification)\`);
+        await wait(700);
+        setGate({ x: 0, y: 0, status: "hidden" });
+      }
+      async function showReject(u, v, score) {
+        const mid = midOf(u, v, nodeMap);
+        setGate({ x: mid.x, y: mid.y - 54, status: "checking", score, threshold: THRESH });
+        await wait(T.check);
+        setGate(g => ({ ...g, status: "fail" }));
+        await wait(700);
+        setGate({ x: 0, y: 0, status: "hidden" });
+      }
+
+      function getAcceptedTier(u, v) {
+        const e = edgesRef.current.find(e => e.kind === "accept" && ((e.from === u && e.to === v) || (e.from === v && e.to === u)));
+        return e && e.tier;
+      }
+      function purgeRejects() { setEdges(prev => prev.filter(e => e.kind !== "reject")); }
+      function addEdge(e) { setEdges(prev => (prev.some(p => sameUndirected(p, e)) ? prev : [...prev, e])); }
+      function replaceEdge(match, next) {
+        setEdges(prev => {
+          const idx = prev.findIndex(p => sameUndirected(p, match));
+          if (idx === -1) return prev;
+          const out = prev.slice(); out[idx] = next; return out;
+        });
+      }
+
+      function buildAdjacency(list) {
+        const adj = {}; letters.forEach(ch => adj[ch] = []);
+        for (const e of list) { adj[e.from].push(e.to); adj[e.to].push(e.from); }
+        return adj;
+      }
+      function bfs(start, adj) {
+        const q = [start]; const seen = new Set([start]);
+        const dist = { [start]: 0 }; const parent = { [start]: null };
+        while (q.length) {
+          const u = q.shift();
+          for (const v of (adj[u] || [])) {
+            if (!seen.has(v)) { seen.add(v); dist[v] = (dist[u] || 0) + 1; parent[v] = u; q.push(v); }
+          }
+        }
+        return { dist, parent };
+      }
+      function bfsOrderList(start, adj) {
+        const q = [start]; const seen = new Set([start]); const order = [];
+        while (q.length) {
+          const u = q.shift(); order.push(u);
+          for (const v of (adj[u] || [])) { if (!seen.has(v)) { seen.add(v); q.push(v); } }
+        }
+        return order;
+      }
+      function reconstructPath(start, end, parent) {
+        const path = []; let cur = end;
+        while (cur != null) { path.push(cur); cur = parent[cur] || null; }
+        path.reverse(); if (path[0] !== start) return []; return path;
+      }
+      function findDiameter(adj) {
+        let bestU = letters[0], bestV = letters[0], bestDist = -1, bestPath = [];
+        for (const s of letters) {
+          const { dist, parent } = bfs(s, adj);
+          for (const t of letters) {
+            const d = dist[t];
+            if (d != null && d > bestDist) { bestDist = d; bestU = s; bestV = t; bestPath = reconstructPath(s, t, parent); }
+          }
+        }
+        return { u: bestU, v: bestV, dist: bestDist, path: bestPath };
+      }
+
+      async function waveAlongPath(path) {
+        setScanFrontier(new Set());
+        for (let i = 0; i < path.length; i++) {
+          setScanFrontier(new Set([path[i]]));
+          if (i < path.length - 1) setEdges(prev => [...prev, { from: path[i], to: path[i+1], kind: "trace" }]);
+          await wait(T.waveNode);
+          if (i < path.length - 1) {
+            setEdges(prev => prev.filter(e => !(e.kind === "trace" && sameUndirected(e, { from: path[i], to: path[i+1] }))));
+            await wait(T.waveEdge);
+          }
+        }
+        setScanFrontier(new Set());
+      }
+      async function waveOverOrder(orderList) {
+        setScanFrontier(new Set());
+        for (const id of orderList) { setScanFrontier(new Set([id])); await wait(T.waveNode * 0.8); }
+        setScanFrontier(new Set());
+      }
+
+      function swapOrderByIds(a, b) {
+        setOrder(prev => {
+          const arr = [...prev];
+          const ia = arr.indexOf(a), ib = arr.indexOf(b);
+          if (ia === -1 || ib === -1) return prev;
+          [arr[ia], arr[ib]] = [arr[ib], arr[ia]];
+          return arr;
+        });
+      }
+      async function pulseSwap(ids) { setSwapPulse(new Set(ids)); await wait(500); setSwapPulse(new Set()); }
+
+      const resetAll = () => {
+        setEdges([]); setOrder([...letters]); setFocus(null); setSelected(new Set());
+        setScanFrontier(new Set()); setSwapPulse(new Set()); setGate({ x: 0, y: 0, status: "hidden" });
+        setPhaseText("Step 1 - Place nodes A-H on a line"); setPlaying(false);
+      };
+
+      // ========== Render ==========
+      return (
+        <div className="w-full max-w-5xl mx-auto p-6">
+          <div className="flex items-center justify-between mb-4 gap-3">
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">GCD Demo</h1>
+            <div className="flex flex-wrap gap-2">
+              <button className="px-3 py-1.5 rounded-2xl shadow-sm bg-white/10 text-white text-sm hover:bg-white/20 ring-1 ring-white/20" onClick={playStep1} disabled={playing} title="Step 1: scripted A...H round">Play Step 1 Round</button>
+              <button className="px-3 py-1.5 rounded-2xl shadow-sm bg-white/10 text-white text-sm hover:bg-white/20 ring-1 ring-white/20" onClick={playStep2} disabled={playing} title="Step 2: Condensation - 3 links (A-B, E-D, B-G) + farthest pair search">Play Step 2 - Condensation</button>
+              <button className="px-3 py-1.5 rounded-2xl shadow-sm bg-white/10 text-white text-sm hover:bg-white/20 ring-1 ring-white/20" onClick={playStep3} disabled={playing} title="Step 3: Double-swap BFS - reach A C B E D G F H">Play Step 3 - Double-swap BFS</button>
+              <button className="px-3 py-1.5 rounded-2xl shadow-sm bg-white/10 text-white text-sm hover:bg-white/20 ring-1 ring-white/20" onClick={playStep4} disabled={playing} title="Step 4: K-window Densification (K=4)">Play Step 4 - K-window</button>
+              <button className="px-3 py-1.5 rounded-2xl shadow-sm bg-white/10 text-white text-sm hover:bg-white/20 ring-1 ring-white/20" onClick={playStep5} disabled={playing} title="Step 5: SuperChains Seriation">Play Step 5 - SuperChains</button>
+              <button className="px-3 py-1.5 rounded-2xl shadow-sm bg-white/10 text-white text-sm hover:bg-white/20 ring-1 ring-white/20" onClick={playAll} disabled={playing} title="Auto play Steps 1->4">Auto Play 1→4</button>
+              <button className="px-3 py-1.5 rounded-2xl shadow-sm bg-white/10 text-white text-sm hover:bg-white/20 ring-1 ring-white/20" onClick={playAllTo5} disabled={playing} title="Auto play Steps 1->5">Auto Play 1→5</button>
+              <button className="px-3 py-1.5 rounded-2xl shadow-sm bg-white text-gray-700 ring-1 ring-gray-300 text-sm hover:bg-gray-50" onClick={resetAll}>Reset</button>
+            </div>
+          </div>
+
+          <p className="text-sm text-white/70 mb-3">{phaseText}</p>
+
+          <div ref={frameRef} className="relative w-full h-[300px] rounded-2xl overflow-hidden"
+               style={{ background: "radial-gradient(120% 120% at 50% 10%, rgba(60,60,90,0.35) 0%, rgba(10,10,14,0.95) 60%, #050508 100%)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.06)" }}>
+            <Grid />
+
+            <WindowOverlay ids={winIds} nodeMap={nodeMap} />
+
+            <svg className="absolute inset-0 w-full h-full z-0" viewBox={"0 0 " + coordW + " 300"} preserveAspectRatio="none">
+              {edges.map((e, idx) => {
+                const a = nodeMap[e.from]; const b = nodeMap[e.to]; if (!a || !b) return null;
+                const iFrom = order.indexOf(e.from);
+                const iTo = order.indexOf(e.to);
+                const adjacent = iFrom !== -1 && iTo !== -1 && Math.abs(iFrom - iTo) === 1;
+
+                let path = "";
+                if (adjacent) {
+                  path = `M ${a.x} ${a.y} L ${b.x} ${b.y}`;
+                } else {
+                  const dist = Math.abs(a.x - b.x);
+                  const arcH = Math.max(78, dist * 0.32);
+                  const ctrl = e.tier === 4 ? a.y + arcH : a.y - arcH;
+                  path = `M ${a.x} ${a.y} Q ${(a.x + b.x) / 2} ${ctrl} ${b.x} ${b.y}`;
+                }
+                const base = { initial: { pathLength: 0, opacity: 0 }, animate: { pathLength: 1, opacity: 1 }, transition: { duration: 1.0, ease: "easeInOut" } };
+                let stroke = "#94a3b8"; let dash = ""; let opacity = 1;
+                if (e.kind === "candidate") { stroke = "#94a3b8"; dash = "6 6"; }
+                else if (e.kind === "reject") { stroke = "#ef4444"; dash = "6 6"; opacity = 0.95; }
+                else if (e.kind === "accept") { stroke = "#e5e7eb"; dash = ""; }
+                else if (e.kind === "trace") { stroke = "#93c5fd"; dash = "2 6"; opacity = 0.95; }
+                return (<motion.path key={idx} d={path} stroke={stroke} strokeWidth={3} strokeDasharray={dash} strokeLinecap="round" fill="transparent" {...base} style={{ opacity }} />);
+              })}
+            </svg>
+
+            <AnimatePresence>
+              {gate.status !== "hidden" && (<Gate x={gate.x} y={gate.y} status={gate.status} score={gate.score} threshold={gate.threshold} />)}
+            </AnimatePresence>
+
+            {nodes.map((n) => (
+              <Node key={n.id} x={n.x} y={n.y} label={n.id}
+                    focus={focus === n.id} selected={selected.has(n.id)} scanned={scanFrontier.has(n.id)} swapping={swapPulse.has(n.id)} />
+            ))}
+          </div>
+
+          <div className="mt-4 text-sm text-white/60">
+            <span className="inline-flex items-center gap-2 mr-4"><span className="w-3 h-0.5 bg-gray-200 inline-block"></span> accept</span>
+            <span className="inline-flex items-center gap-2 mr-4"><span className="w-3 h-0.5 bg-slate-400 border-t border-dashed inline-block"></span> try / trace</span>
+            <span className="inline-flex items-center gap-2"><span className="w-3 h-0.5 bg-red-500 border-t border-dashed inline-block"></span> reject</span>
+          </div>
+        </div>
+      );
+    }
+
+    function Node({ x, y, label, focus, selected, scanned, swapping }) {
+      const ringClass = selected ? "ring-sky-400/80" : focus ? "ring-yellow-300/90" : scanned ? "ring-blue-300/70" : swapping ? "ring-purple-400/80" : "ring-transparent";
+      return (
+        <motion.div layout className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: x, top: y }} initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 220, damping: 20, layout: { duration: 0.6, ease: "easeInOut" } }}>
+          <div className="relative">
+            <motion.div className={"w-12 h-12 rounded-full grid place-items-center text-sm font-semibold text-white shadow-2xl border border-white/25 bg-white/10 backdrop-blur"}
+              animate={focus ? { scale: [1, 1.08, 1] } : {}} transition={{ duration: 1.3, repeat: focus ? Infinity : 0, repeatType: "mirror" }}>
+              {label}
+            </motion.div>
+            {(focus || selected || scanned || swapping) && (
+              <motion.div className={"absolute inset-0 rounded-full ring-4 " + ringClass}
+                initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1.18, opacity: 0.9 }} transition={{ duration: 0.4 }}
+              />
+            )}
+          </div>
+        </motion.div>
+      );
+    }
+
+    function Grid() {
+      return (
+        <svg className="absolute inset-0 w-full h-full" aria-hidden>
+          <defs>
+            <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+              <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid)" />
+          <rect width="100%" height="100%" fill="rgba(255,255,255,0.02)" />
+        </svg>
+      );
+    }
+
+    function WindowOverlay({ ids, nodeMap }) {
+      if (!ids || ids.length === 0) return null;
+      const xs = ids.map(id => nodeMap[id]?.x).filter(v => typeof v === 'number');
+      if (!xs.length) return null;
+      const left = Math.min(...xs) - 40;
+      const right = Math.max(...xs) + 40;
+      const top = 160 - 72;
+      const height = 144;
+      return (
+        <motion.div
+          className="absolute rounded-2xl"
+          style={{ zIndex: 1, boxShadow: "inset 0 0 0 1px rgba(125,211,252,0.35)", background: "rgba(125,211,252,0.08)" }}
+          initial={false}
+          animate={{ left, top, width: right - left, height, opacity: 1 }}
+          transition={{ duration: 0.45, ease: "easeInOut" }}
+        />
+      );
+    }
+
+    function Gate({ x, y, status, score, threshold }) {
+      const pass = status === "pass"; const fail = status === "fail"; const checking = status === "checking";
+      return (
+        <motion.div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: x, top: y }} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
+          <div className="px-3 py-2 rounded-2xl bg-white/8 backdrop-blur border border-white/15 text-xs text-white/90 shadow-lg">
+            <div className="flex items-center gap-2">
+              <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-white/10 border border-white/15">
+                <motion.div className="absolute left-1 right-1 top-1 bottom-1 rounded-sm" style={{ backgroundColor: fail ? "rgba(239,68,68,0.35)" : pass ? "rgba(16,185,129,0.35)" : "rgba(148,163,184,0.25)" }} animate={{ scaleY: pass ? 0.2 : 1 }} transition={{ type: "spring", stiffness: 140, damping: 16 }} />
+                <motion.div className="absolute inset-1 bg-white/40" initial={false} animate={pass ? { clipPath: "inset(0 0 40% 0)", opacity: 0.0 } : { clipPath: "inset(0 0 0 0)", opacity: 0.0 }} />
+              </div>
+              <div className="leading-tight">
+                <div className={"font-semibold " + (pass ? "text-emerald-300" : fail ? "text-red-300" : "text-slate-200")}>{checking ? "Checking threshold..." : pass ? "ACCEPT" : "REJECT"}</div>
+                <div className="text-[10px] text-white/70">score {score?.toFixed(2)} {pass ? ">=" : fail ? "<" : "vs"} threshold {threshold?.toFixed(2)}</div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      );
+    }
+
+    // Mount
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<GCDDemo />);
+  </script>
+</body>
+</html>
