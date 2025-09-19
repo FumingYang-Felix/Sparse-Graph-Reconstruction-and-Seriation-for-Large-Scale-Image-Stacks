@@ -1,12 +1,24 @@
 # GCD Seriation Toolkit — Graph‑Condensation‑Densification + CSV Clean + Chain Stitch
 
-<video width="100%" autoplay loop muted playsinline controls poster="poster.jpg">
-  <source src="GCD-demo.mp4?raw=1" type="video/mp4">
-  <!-- 备用：raw.githubusercontent.com 直链 -->
-  <source src="https://raw.githubusercontent.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/main/GCD-demo.mp4" type="video/mp4">
+
+
+<video
+  width="100%"
+  autoplay
+  loop
+  muted
+  playsinline
+  controls
+  style="max-width: 100%; height: auto;"
+>
+  <source src="https://raw.githubusercontent.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/main/GCD-demo.mp4" type="video/mp4" />
+
+  <source src="GCD-demo.mp4?raw=1" type="video/mp4" />
   Your browser doesn’t support embedded videos.
-  <a href="GCD-demo.mp4?raw=1">Download MP4</a>
+  <a href="https://raw.githubusercontent.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/main/GCD-demo.mp4">Download MP4</a>
 </video>
+
+
 
 A compact, end‑to‑end toolkit for 1‑D **section seriation** built around three scripts:
 
