@@ -1,5 +1,20 @@
 # GCD Seriation Toolkit — Graph‑Condensation‑Densification + CSV Clean + Chain Stitch
 
+<p align="center">
+  <video
+    src="https://github.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/releases/download/v1/<FILENAME>"
+    width="100%"
+    controls
+    autoplay
+    loop
+    muted
+    playsinline
+  >
+    Your browser does not support the video tag.
+  </video>
+</p>
+
+
 A compact, end‑to‑end toolkit for 1‑D **section seriation** built around three scripts:
 
 1. **`Graph-Condensation-Densification.py`** — the main seriation engine (GCD).  
