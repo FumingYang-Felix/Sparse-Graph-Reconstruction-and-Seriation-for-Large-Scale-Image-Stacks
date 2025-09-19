@@ -19,7 +19,6 @@
 
 
 
-
 A compact, end‑to‑end toolkit for 1‑D **section seriation** built around three scripts:
 
 1. **`Graph-Condensation-Densification.py`** — the main seriation engine (GCD).  
