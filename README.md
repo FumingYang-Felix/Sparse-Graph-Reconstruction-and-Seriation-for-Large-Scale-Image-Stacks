@@ -9,14 +9,16 @@
   muted
   playsinline
   controls
-  style="max-width: 100%; height: auto;"
+  style="max-width:100%;height:auto;"
 >
-  <source src="https://raw.githubusercontent.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/main/GCD-demo.mp4" type="video/mp4" />
-
-  <source src="GCD-demo.mp4?raw=1" type="video/mp4" />
+  <!-- 主：raw.githubusercontent.com 直链（最稳） -->
+  <source src="https://raw.githubusercontent.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/main/GCD-demo.mp4" type="video/mp4">
+  <!-- 备：相对路径加 ?raw=1 -->
+  <source src="GCD-demo.mp4?raw=1" type="video/mp4">
   Your browser doesn’t support embedded videos.
   <a href="https://raw.githubusercontent.com/FumingYang-Felix/Graph-Condensation-Densification-and-SuperChain-for-1D-Seriation/main/GCD-demo.mp4">Download MP4</a>
 </video>
+
 
 
 
