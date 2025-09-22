@@ -1,9 +1,16 @@
 # GCD Seriation Toolkit — Graph‑Condensation‑Densification + CSV Clean + Chain Stitch
 
-<video src="https://github.com/fumingyang-felix/graph-condensation-densification-and-superchain-for-1d-seriation/releases/download/v1/GCD.mp4"
-       controls width="820" muted playsinline>
-  Your browser does not support the video tag.
-</video> 
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=Qpyv1rFB6NE">
+    <img src="homepage.jpg" alt="SuperChain demo" width="900">
+  </a>
+  <br/>
+  <a href="https://youtu.be/hureNsUSHZs">
+    <img src="https://img.shields.io/badge/YouTube-Watch-red?logo=youtube" alt="Watch on YouTube">
+  </a>
+</p>
+
 
 
 A compact, end‑to‑end toolkit for 1‑D **section seriation** built around three scripts:
