@@ -3,7 +3,7 @@
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=Qpyv1rFB6NE">
-    <img src="homepage.jpg" alt="SuperChain demo" width="900">
+    <img src="homepage.png" alt="SuperChain demo" width="900">
   </a>
   <br/>
   <a href="https://youtu.be/hureNsUSHZs">
