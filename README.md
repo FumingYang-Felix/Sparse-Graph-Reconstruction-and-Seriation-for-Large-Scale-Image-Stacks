@@ -322,6 +322,7 @@ A: See the run output folder (created by GCD). The file is `final_order.csv`.
 
 ## Citing & License
 
+```bibtex
 @misc{yang2025_nearlinear_superchain,
   title   = {Near-linear Graph Condensation-Densification and SuperChain for Quasi-monotonic Morphological Sequence Recovery},
   author  = {Yang, Fuming and Meirovitch, Yaron and Lichtman, Jeff W.},
@@ -330,6 +331,7 @@ A: See the run output folder (created by GCD). The file is `final_order.csv`.
   howpublished = {\url{[https://github.com/fumingyang-felix/Graph-Condesation-Densification-and-SuperChain-for-1D-seriation]}}
 }
 
+```
 **License:** MIT (unless you choose otherwise). Add a `LICENSE` file to override.
 
 ---
