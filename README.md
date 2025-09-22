@@ -58,7 +58,7 @@ This README explains prerequisites, how to run the pipeline step‑by‑step, ex
 Then we post‑process pairwise results:
 
 - `clean_csv.py` filters invalid rows and adds a quality **score = ssim × num_inliers`.  
-- `chain_stitch.py` uses **best/second‑best** neighbors to create non‑overlapping chains and link all super‑chains into a global order.
+- `SuperChain.py` uses **best/second‑best** neighbors to create non‑overlapping chains and link all super‑chains into a global order.
 
 ---
 
@@ -68,7 +68,7 @@ Then we post‑process pairwise results:
 .
 ├── Graph-Condensation-Densification.py   # main GCD algorithm
 ├── clean_csv.py                           # CSV cleaner / scorer
-├── chain_stitch.py                        # chain builder & linker
+├── SuperChain.py                        # chain builder & linker
 └── README.md
 ```
 
