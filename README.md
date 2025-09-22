@@ -1,4 +1,4 @@
-# GCD Seriation Toolkit — Graph‑Condensation‑Densification + CSV Clean + Chain Stitch
+# GCD Seriation Toolkit — Graph‑Condensation‑Densification + CSV Clean + SuperChain
 
 
 <p align="center">
@@ -17,7 +17,7 @@ A compact, end‑to‑end toolkit for 1‑D **section seriation** built around t
 
 1. **`Graph-Condensation-Densification.py`** — the main seriation engine (GCD).  
 2. **`clean_csv.py`** — quick cleaner that filters pairwise results and adds a `score`.  
-3. **`chain_stitch.py`** — builds chains from best/second‑best neighbors and links them into a global order.
+3. **`SuperChain.py`** — builds chains from best/second‑best neighbors and links them into a global order.
 
 This README explains prerequisites, how to run the pipeline step‑by‑step, expected inputs/outputs, practical tips, and benchmarks you can try.
 
