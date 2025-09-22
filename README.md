@@ -1,6 +1,6 @@
 # GCD Seriation Toolkit — Graph‑Condensation‑Densification + CSV Clean + Chain Stitch
 
-<video src="https://github.com/fumingyang-felix/graph-condensation-densification-and-superchain-for-1d-seriation/releases/download/V1/GCD.mp4"
+<video src="https://github.com/fumingyang-felix/graph-condensation-densification-and-superchain-for-1d-seriation/releases/download/v1/GCD.mp4"
        controls width="820" muted playsinline>
   Your browser does not support the video tag.
 </video>
