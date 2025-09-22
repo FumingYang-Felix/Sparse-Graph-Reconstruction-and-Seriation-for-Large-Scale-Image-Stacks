@@ -36,7 +36,7 @@ This README explains prerequisites, how to run the pipeline step‑by‑step, ex
 - [Script Details](#script-details)
   - [`Graph-Condensation-Densification.py`](#graph-condensation-densificationpy)
   - [`clean_csv.py`](#cleancsvpy)
-  - [`chain_stitch.py`](#chain_stitchpy)
+  - [`SuperChain.py`](#SuperChainpy)
 - [Benchmarks](#benchmarks)
 - [Performance Tips](#performance-tips)
 - [Troubleshooting](#troubleshooting)
@@ -247,7 +247,7 @@ python clean_csv.py path/to/pairs.csv -o path/to/cleaned.csv
 
 ---
 
-### `chain_stitch.py`
+### `SuperChain.py`
 
 **Purpose**: derive chains from best/second‑best pairs and link them into a global order.
 
@@ -263,7 +263,7 @@ If you have both `A→B` and `B→A`, the loader keeps the **max score per unord
 
 **Usage**
 ```bash
-python chain_stitch.py --csv new_pairwise_filtered.csv --output best_pair_chains_graph.txt
+python SuperChain.py --csv new_pairwise_filtered.csv --output best_pair_chains_graph.txt
 ```
 
 ---
