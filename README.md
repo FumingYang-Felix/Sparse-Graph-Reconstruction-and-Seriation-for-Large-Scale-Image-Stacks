@@ -297,14 +297,14 @@ Two ready‑to‑run benchmark bundles are prepared:
 
 ## Troubleshooting
 
-- **`KeyError: 'fixed'/'moving'/'score'` in `chain_stitch.py`**  
+- **`KeyError: 'fixed'/'moving'/'score'` in `SuperChain.py`**  
   CSV headers must *exactly* be `fixed,moving,score`. Use `clean_csv.py` to produce a conforming CSV.
 
 - **`ValueError` parsing scores**  
   Ensure the `score` column is numeric (no strings/NA).
 
 - **Names not detected / missing**  
-  If your IDs don’t match `NAME_PAT`, update the regex at the top of `chain_stitch.py`.
+  If your IDs don’t match `NAME_PAT`, update the regex at the top of `SuperChain.py`.
 
 - **Outliers that won’t place**  
   Common causes are incorrect ROI placement or rotation/scale far outside biological limits. Fix ROIs and re‑export the pairs.
