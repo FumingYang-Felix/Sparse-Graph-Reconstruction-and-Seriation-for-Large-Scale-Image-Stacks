@@ -3,7 +3,7 @@
 <video src="https://github.com/fumingyang-felix/graph-condensation-densification-and-superchain-for-1d-seriation/releases/download/v1/GCD.mp4"
        controls width="820" muted playsinline>
   Your browser does not support the video tag.
-</video>
+</video> 
 
 
 A compact, end‑to‑end toolkit for 1‑D **section seriation** built around three scripts:
