@@ -2,11 +2,11 @@
 
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=Qpyv1rFB6NE">
+  <a href="https://youtu.be/hureNsUSHZs">
     <img src="homepage.png" alt="SuperChain demo" width="900">
   </a>
   <br/>
-  <a href="https://youtu.be/hureNsUSHZs">
+  <a href="[https://youtu.be/hureNsUSHZs](https://youtu.be/hureNsUSHZs)">
     <img src="https://img.shields.io/badge/YouTube-Watch-red?logo=youtube" alt="Watch on YouTube">
   </a>
 </p>
