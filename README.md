@@ -331,11 +331,11 @@ A: See the run output folder (created by GCD). The file is `final_order.csv`.
 
 ```bibtex
 @misc{yang2025_nearlinear_superchain,
-  title   = {Near-linear Graph Condensation-Densification and SuperChain for Quasi-monotonic Morphological Sequence Recovery},
+  title   = {Sparse-Graph-Reconstruction-and-Seriation-for-Large-Scale-Image-Stacks},
   author  = {Yang, Fuming and Meirovitch, Yaron and Lichtman, Jeff W.},
   year    = {2025},
   note    = {Preprint, arXiv forthcoming},
-  howpublished = {\url{[https://github.com/fumingyang-felix/Graph-Condesation-Densification-and-SuperChain-for-1D-seriation]}}
+  howpublished = {\url{[https://github.com/fumingyang-felix/Sparse-Graph-Reconstruction-and-Seriation-for-Large-Scale-Image-Stacks]}}
 }
 
 ```
