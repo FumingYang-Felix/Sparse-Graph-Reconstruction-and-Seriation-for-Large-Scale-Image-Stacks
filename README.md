@@ -181,7 +181,7 @@ By default the cleaned file is written to:
 Use the **cleaned** CSV (must have `fixed,moving,score` headers):
 
 ```bash
-python chain_stitch.py   --csv results/sequencing/cleaned_csv/pairs_cleaned.csv   --output results/sequencing/best_pair_chains_graph.txt
+python SuperChain.py   --csv results/sequencing/cleaned_csv/pairs_cleaned.csv   --output results/sequencing/best_pair_chains_graph.txt
 ```
 
 The script prints a five‑part report and saves the same content to the output text file:
