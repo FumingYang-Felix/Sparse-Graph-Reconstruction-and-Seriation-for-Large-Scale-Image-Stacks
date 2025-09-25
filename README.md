@@ -72,7 +72,7 @@ Then we post‑process pairwise results:
 └── README.md
 ```
 
-> Your repo may also contain an `assets/` or `results/` folder created at runtime.
+
 
 ---
 
