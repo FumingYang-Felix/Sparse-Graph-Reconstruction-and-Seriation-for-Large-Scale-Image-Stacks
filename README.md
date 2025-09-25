@@ -339,7 +339,7 @@ A: See the run output folder (created by GCD). The file is `final_order.csv`.
 }
 
 ```
-**License:** MIT (unless you choose otherwise). Add a `LICENSE` file to override.
+**License:** MIT
 
 ---
 
