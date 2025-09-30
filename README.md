@@ -330,13 +330,16 @@ A: See the run output folder (created by GCD). The file is `final_order.csv`.
 ## Citing & License
 
 ```bibtex
-@misc{yang2025_nearlinear_superchain,
-  title   = {Sparse-Graph-Reconstruction-and-Seriation-for-Large-Scale-Image-Stacks},
-  author  = {Yang, Fuming and Meirovitch, Yaron and Lichtman, Jeff W.},
-  year    = {2025},
-  note    = {Preprint, arXiv forthcoming},
-  howpublished = {\url{[https://github.com/fumingyang-felix/Sparse-Graph-Reconstruction-and-Seriation-for-Large-Scale-Image-Stacks]}}
+@misc{yang2025sparsegraph,
+  title         = {Sparse-Graph Reconstruction and Seriation for Large-Scale Image Stacks},
+  author        = {Yang, Fuming and Meirovitch, Yaron and Lichtman, Jeff W.},
+  year          = {2025},
+  eprint        = {2509.23084},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2509.23084},
+  note          = {Code: \url{https://github.com/fumingyang-felix/Sparse-Graph-Reconstruction-and-Seriation-for-Large-Scale-Image-Stacks}}
 }
+
 
 ```
 **License:** MIT
